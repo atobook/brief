@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A2BOOK — بريف المشروع</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+<style>
+/* ── TOKENS ── */
+:root {
+  --navy:       #022751;
+  --navy-deep:  #011830;
+  --navy-mid:   #0a3d6b;
+  --orange:     #F26744;
+  --orange-lt:  #fde8e1;
+  --paper:      #F7F3ED;
+  --paper-dark: #ede8df;
+  --ink:        #1a1a2e;
+  --muted:      #8a8a9a;
+  --border:     #ddd5c8;
+  --white:      #ffffff;
+  --success:    #1a7a4a;
+  --radius:     12px;
+}
+
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Cairo', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.75;
+  min-height: 100vh;
+}
+
+/* ── PROGRESS BAR ── */
+.progress-rail {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: rgba(2,39,81,0.12);
+  z-index: 200;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--orange);
+  transition: width 0.45s cubic-bezier(.4,0,.2,1);
+  width: 0%;
+}
+
+/* ── HERO ── */
+.hero {
+  background: var(--navy-deep);
+  padding: 52px 32px 44px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -80px; right: -80px;
+  width: 320px; height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(242,103,68,0.14) 0%, transparent 65%);
+  pointer-events: none;
+}
+.hero-logo {
+  font-size: 13px;
+  letter-spacing: 4px;
+  color: var(--orange);
+  font-family: 'Cormorant Garamond', serif;
+  margin-bottom: 16px;
+  opacity: 0.85;
+}
+.hero h1 {
+  font-size: clamp(26px, 5vw, 40px);
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.2;
+  margin-bottom: 10px;
+}
+.hero-sub {
+  color: rgba(255,255,255,0.45);
+  font-size: 14px;
+  max-width: 440px;
+  margin: 0 auto 28px;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+}
+.hero-steps {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  flex-wrap: wrap;
+  max-width: 680px;
+  margin: 0 auto;
+}
+.hero-step {
+  flex: 1;
+  min-width: 90px;
+  padding: 10px 8px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.35);
+  letter-spacing: 0.5px;
+  position: relative;
+  cursor: pointer;
+  transition: color 0.2s;
+  border-bottom: 2px solid rgba(255,255,255,0.08);
+}
+.hero-step.active { color: #fff; border-bottom-color: var(--orange); }
+.hero-step.done   { color: rgba(255,255,255,0.55); border-bottom-color: rgba(242,103,68,0.35); }
+.hero-step-num {
+  display: block;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: inherit;
+  margin-bottom: 3px;
+}
+.hero-step.active .hero-step-num { color: var(--orange); }
+
+/* ── MAIN ── */
+.main {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 40px 20px 80px;
+}
+
+/* ── SCREEN ── */
+.screen { display: none; }
+.screen.active {
+  display: block;
+  animation: fadeUp 0.38s ease;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── SCREEN HEADER ── */
+.screen-header {
+  margin-bottom: 32px;
+}
+.screen-tag {
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--orange);
+  text-transform: uppercase;
+  font-family: 'Cormorant Garamond', serif;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.screen-tag::after {
+  content: '';
+  height: 1px;
+  flex: 1;
+  background: var(--border);
+}
+.screen-title {
+  font-size: clamp(20px, 4vw, 28px);
+  font-weight: 800;
+  color: var(--navy);
+  line-height: 1.25;
+  margin-bottom: 6px;
+}
+.screen-desc {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+/* ── FIELD GROUP ── */
+.field-group { margin-bottom: 24px; }
+.field-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 8px;
+}
+.field-hint {
+  font-size: 11.5px;
+  color: var(--muted);
+  margin-bottom: 10px;
+  display: block;
+}
+.field-required { color: var(--orange); margin-right: 3px; }
+
+/* ── TEXT INPUTS ── */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="number"],
+textarea,
+select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--white);
+  font-family: 'Cairo', sans-serif;
+  font-size: 14px;
+  color: var(--ink);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+  appearance: none;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(242,103,68,0.12);
+}
+textarea { resize: vertical; min-height: 90px; }
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23F26744' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: left 14px center;
+  padding-left: 42px;
+}
+
+/* ── INLINE ROW ── */
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+@media (max-width: 560px) { .field-row { grid-template-columns: 1fr; } }
+
+/* ── CHOICE CARDS (big service type) ── */
+.choice-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 8px;
+}
+@media (max-width: 540px) { .choice-grid { grid-template-columns: 1fr; } }
+
+.choice-card {
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px 18px;
+  cursor: pointer;
+  transition: all 0.22s;
+  background: var(--white);
+  text-align: right;
+  position: relative;
+  user-select: none;
+}
+.choice-card:hover { border-color: var(--orange); background: var(--orange-lt); }
+.choice-card.selected {
+  border-color: var(--orange);
+  background: var(--orange-lt);
+  box-shadow: 0 4px 20px rgba(242,103,68,0.15);
+}
+.choice-card.selected::after {
+  content: '✓';
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  width: 22px; height: 22px;
+  background: var(--orange);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.choice-icon { font-size: 32px; margin-bottom: 12px; display: block; }
+.choice-name {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--navy);
+  margin-bottom: 4px;
+}
+.choice-desc { font-size: 12.5px; color: #666; line-height: 1.5; }
+input[type="radio"].hidden-radio,
+input[type="checkbox"].hidden-check {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ── PILL CHOICES (multi-select chips) ── */
+.pill-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+.pill {
+  padding: 8px 18px;
+  border: 1.5px solid var(--border);
+  border-radius: 100px;
+  background: var(--white);
+  cursor: pointer;
+  font-family: 'Cairo', sans-serif;
+  font-size: 13px;
+  color: var(--ink);
+  transition: all 0.18s;
+  user-select: none;
+}
+.pill:hover { border-color: var(--orange); color: var(--orange); }
+.pill.selected {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: #fff;
+}
+
+/* ── TOGGLE CHECKBOX (yes/no style) ── */
+.toggle-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+.toggle-btn {
+  padding: 9px 22px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  background: var(--white);
+  cursor: pointer;
+  font-family: 'Cairo', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  transition: all 0.18s;
+  user-select: none;
+}
+.toggle-btn:hover { border-color: var(--navy); color: var(--navy); }
+.toggle-btn.selected {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: #fff;
+}
+
+/* ── CHECK BOXES (fancy) ── */
+.check-list { display: flex; flex-direction: column; gap: 10px; }
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  background: var(--white);
+  transition: all 0.18s;
+  user-select: none;
+}
+.check-item:hover { border-color: var(--orange); }
+.check-item.selected { border-color: var(--orange); background: var(--orange-lt); }
+.check-box {
+  width: 20px; height: 20px;
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  flex-shrink: 0;
+  transition: all 0.18s;
+  display: flex; align-items: center; justify-content: center;
+}
+.check-item.selected .check-box {
+  background: var(--orange);
+  border-color: var(--orange);
+}
+.check-item.selected .check-box::after { content: '✓'; color: #fff; font-size: 12px; font-weight: 700; }
+.check-label { font-size: 13.5px; color: var(--ink); }
+.check-note  { font-size: 11.5px; color: var(--muted); margin-top: 1px; }
+
+/* ── SECTION DIVIDER ── */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 28px 0;
+}
+
+/* ── INFO BOX ── */
+.info-box {
+  background: var(--navy);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  margin-bottom: 24px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.info-box-icon { font-size: 20px; flex-shrink: 0; }
+.info-box p { font-size: 13px; color: rgba(255,255,255,0.75); line-height: 1.65; margin: 0; }
+.info-box strong { color: #fff; }
+
+/* ── WARNING BOX ── */
+.warn-box {
+  background: var(--orange-lt);
+  border-right: 3px solid var(--orange);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+}
+.warn-box p { font-size: 13px; color: #8a2d18; margin: 0; font-weight: 600; }
+
+/* ── CONDITIONAL SECTION ── */
+.conditional-section {
+  overflow: hidden;
+  transition: max-height 0.45s cubic-bezier(.4,0,.2,1), opacity 0.35s ease;
+  max-height: 2000px;
+  opacity: 1;
+}
+.conditional-section.hidden {
+  max-height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ── NAVIGATION ── */
+.nav-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  gap: 12px;
+}
+.btn-back {
+  padding: 12px 28px;
+  border: 1.5px solid var(--border);
+  border-radius: 100px;
+  background: transparent;
+  color: var(--muted);
+  font-family: 'Cairo', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-back:hover { border-color: var(--navy); color: var(--navy); }
+.btn-next {
+  padding: 14px 36px;
+  border: none;
+  border-radius: 100px;
+  background: var(--orange);
+  color: #fff;
+  font-family: 'Cairo', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-next:hover { background: #d4502a; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(242,103,68,0.3); }
+.btn-next:disabled { background: var(--border); cursor: not-allowed; transform: none; box-shadow: none; }
+.btn-submit {
+  padding: 14px 36px;
+  border: none;
+  border-radius: 100px;
+  background: var(--navy);
+  color: #fff;
+  font-family: 'Cairo', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-submit:hover { background: var(--navy-mid); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(2,39,81,0.3); }
+
+/* ── SUCCESS SCREEN ── */
+.success-screen {
+  text-align: center;
+  padding: 60px 20px;
+  display: none;
+}
+.success-screen.active { display: block; animation: fadeUp 0.5s ease; }
+.success-icon {
+  width: 80px; height: 80px;
+  background: var(--orange-lt);
+  border-radius: 50%;
+  margin: 0 auto 24px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px;
+}
+.success-screen h2 {
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--navy);
+  margin-bottom: 12px;
+}
+.success-screen p {
+  font-size: 15px;
+  color: var(--muted);
+  max-width: 420px;
+  margin: 0 auto 32px;
+  line-height: 1.75;
+}
+.success-badge {
+  display: inline-block;
+  background: var(--navy);
+  color: #fff;
+  padding: 10px 28px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* ── FOOTER ── */
+.site-footer {
+  background: var(--navy-deep);
+  text-align: center;
+  padding: 24px 16px;
+  font-size: 11.5px;
+  color: rgba(255,255,255,0.25);
+  letter-spacing: 1px;
+}
+.site-footer span { color: var(--orange); }
+
+/* ── MOBILE ── */
+@media (max-width: 600px) {
+  .hero { padding: 36px 18px 32px; }
+  .main { padding: 28px 14px 60px; }
+  .hero-steps { gap: 0; }
+  .hero-step { font-size: 9.5px; padding: 8px 4px; }
+  .hero-step-num { font-size: 16px; }
+}
+
+/* ── CHAR COUNT ── */
+.char-counter {
+  font-size: 11px;
+  color: var(--muted);
+  text-align: left;
+  margin-top: 5px;
+}
+
+/* ── STAR FIELD (decorative) ── */
+.hero-stars {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.star {
+  position: absolute;
+  width: 2px; height: 2px;
+  background: rgba(255,255,255,0.25);
+  border-radius: 50%;
+}
+
+/* hidden inputs for form data */
+.data-input { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="progress-rail"><div class="progress-fill" id="progressFill"></div></div>
+
+<!-- ── HERO ── -->
+<header class="hero" id="siteHeader">
+  <div class="hero-stars" id="starsContainer"></div>
+  <div class="hero-logo">A2BOOK STUDIO · هندسة تجربة الكتاب</div>
+  <h1>بريف المشروع</h1>
+  <p class="hero-sub">كل إجابة هنا تُترجَم مباشرة إلى قرار تصميمي — خذ وقتك</p>
+  <div class="hero-steps" id="stepsNav">
+    <div class="hero-step active" data-step="0"><span class="hero-step-num">①</span>الخدمة</div>
+    <div class="hero-step" data-step="1"><span class="hero-step-num">②</span>عن نفسك</div>
+    <div class="hero-step" data-step="2"><span class="hero-step-num">③</span>عن الكتاب</div>
+    <div class="hero-step" data-step="3"><span class="hero-step-num">④</span>التصميم</div>
+    <div class="hero-step" data-step="4"><span class="hero-step-num">⑤</span>التوقعات</div>
+    <div class="hero-step" data-step="5"><span class="hero-step-num">⑥</span>الإرسال</div>
+  </div>
+</header>
+
+<!-- ── FORM ── -->
+<div class="main">
+
+<form id="briefForm" action="https://formspree.io/a2bookstudio@gmail.com" method="POST">
+
+  <!-- hidden aggregated fields -->
+  <input type="hidden" name="_subject" value="A2BOOK Brief جديد">
+  <input type="hidden" name="_replyto" id="f_replyto">
+  <input type="hidden" name="نوع_الخدمة" id="f_service">
+  <input type="hidden" name="نوع_الكتاب" id="f_booktype">
+  <input type="hidden" name="عناصر_خاصة" id="f_elements">
+  <input type="hidden" name="حجم_الكتاب" id="f_size">
+  <input type="hidden" name="طريقة_النشر" id="f_publish">
+  <input type="hidden" name="توجه_الغلاف" id="f_coverstyle">
+  <input type="hidden" name="خيارات_الغلاف" id="f_coveropts">
+  <input type="hidden" name="مستوى_الجهوزية" id="f_readiness">
+  <input type="hidden" name="الميزانية_التقريبية" id="f_budget">
+  <input type="hidden" name="الأولوية" id="f_priority">
+
+  <!-- ════════ SCREEN 0: SERVICE TYPE ════════ -->
+  <div class="screen active" id="screen-0">
+    <div class="screen-header">
+      <div class="screen-tag">الخطوة الأولى</div>
+      <h2 class="screen-title">ما الخدمة التي تحتاجها؟</h2>
+      <p class="screen-desc">سيُحدد هذا الاختيار الأسئلة الظاهرة في الخطوات التالية — اختر ما يناسب مشروعك الآن.</p>
+    </div>
+
+    <div class="field-group">
+      <div class="choice-grid" id="serviceGrid">
+        <div class="choice-card" data-value="full" onclick="selectChoice(this,'serviceGrid','f_service')">
+          <span class="choice-icon">📚</span>
+          <div class="choice-name">خدمة كاملة</div>
+          <div class="choice-desc">غلاف خارجي احترافي + تنسيق داخلي كامل — الأنسب لمن يبدأ من الصفر</div>
+        </div>
+        <div class="choice-card" data-value="interior" onclick="selectChoice(this,'serviceGrid','f_service')">
+          <span class="choice-icon">📄</span>
+          <div class="choice-name">تنسيق داخلي فقط</div>
+          <div class="choice-desc">لديّ غلاف بالفعل أو لا أحتاجه — أريد تنسيق صفحات الكتاب فقط</div>
+        </div>
+        <div class="choice-card" data-value="cover" onclick="selectChoice(this,'serviceGrid','f_service')">
+          <span class="choice-icon">🎨</span>
+          <div class="choice-name">غلاف فقط</div>
+          <div class="choice-desc">أحتاج تصميم غلاف احترافي — التنسيق الداخلي لدي أو سيُنجز لاحقاً</div>
+        </div>
+        <div class="choice-card" data-value="consult" onclick="selectChoice(this,'serviceGrid','f_service')">
+          <span class="choice-icon">💡</span>
+          <div class="choice-name">استشارة وتقييم</div>
+          <div class="choice-desc">أريد رأي متخصص في مخطوطتي وتوجيه بصري — قبل اتخاذ أي قرار</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-bar">
+      <div></div>
+      <button type="button" class="btn-next" onclick="nextScreen(0)" id="btn0">
+        التالي <span>←</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ════════ SCREEN 1: AUTHOR INFO ════════ -->
+  <div class="screen" id="screen-1">
+    <div class="screen-header">
+      <div class="screen-tag">الخطوة الثانية</div>
+      <h2 class="screen-title">تعريف بسيط عنك</h2>
+      <p class="screen-desc">نعاملك كشريك في المشروع — ليس كعميل فقط. هذه المعلومات تساعدنا على فهم سياقك.</p>
+    </div>
+
+    <div class="field-row">
+      <div class="field-group">
+        <label class="field-label">الاسم الكامل <span class="field-required">*</span></label>
+        <input type="text" name="الاسم_الكامل" id="f_name" placeholder="اسمك كما تريده على التواصل" required>
+      </div>
+      <div class="field-group">
+        <label class="field-label">البريد الإلكتروني <span class="field-required">*</span></label>
+        <input type="email" name="البريد_الإلكتروني" id="f_email" placeholder="email@example.com" required oninput="syncReply()">
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field-group">
+        <label class="field-label">رقم واتساب</label>
+        <input type="tel" name="واتساب" placeholder="مثال: 00966501234567">
+      </div>
+      <div class="field-group">
+        <label class="field-label">البلد</label>
+        <select name="البلد">
+          <option value="">اختر بلدك</option>
+          <option>المملكة العربية السعودية</option>
+          <option>مصر</option>
+          <option>الإمارات</option>
+          <option>الكويت</option>
+          <option>قطر</option>
+          <option>البحرين</option>
+          <option>عُمان</option>
+          <option>الأردن</option>
+          <option>لبنان</option>
+          <option>العراق</option>
+          <option>ليبيا</option>
+          <option>تونس</option>
+          <option>الجزائر</option>
+          <option>المغرب</option>
+          <option>دولة أخرى</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="field-group">
+      <label class="field-label">هل سبق أن تعاملت مع مصمم كتاب من قبل؟</label>
+      <div class="toggle-group">
+        <div class="toggle-btn" onclick="toggleBtn(this,'prevwork-group')" data-group="prevwork-group" data-value="نعم — تجربة إيجابية">نعم، وكانت إيجابية ✓</div>
+        <div class="toggle-btn" onclick="toggleBtn(this,'prevwork-group')" data-group="prevwork-group" data-value="نعم — تجربة سلبية">نعم، لكنها لم تكن جيدة</div>
+        <div class="toggle-btn" onclick="toggleBtn(this,'prevwork-group')" data-group="prevwork-group" data-value="لا — أول مرة">لا، هذه أول مرة</div>
+      </div>
+      <input type="hidden" name="تجربة_سابقة" id="f_prevwork">
+    </div>
+
+    <div class="field-group" id="badExpGroup" style="display:none">
+      <label class="field-label">ما الذي لم يعجبك في التجربة السابقة؟</label>
+      <span class="field-hint">معرفة هذا يساعدنا على تجنب نفس المشكلة معك تماماً</span>
+      <textarea name="ملاحظة_التجربة_السابقة" placeholder="مثال: لم يلتزم بالمواعيد / لم يفهم طبيعة محتوى الكتاب / لم يكن يشرح قراراته..."></textarea>
+    </div>
+
+    <div class="nav-bar">
+      <button type="button" class="btn-back" onclick="prevScreen(1)">→ السابق</button>
+      <button type="button" class="btn-next" onclick="nextScreen(1)">التالي <span>←</span></button>
+    </div>
+  </div>
+
+  <!-- ════════ SCREEN 2: BOOK INFO ════════ -->
+  <div class="screen" id="screen-2">
+    <div class="screen-header">
+      <div class="screen-tag">الخطوة الثالثة</div>
+      <h2 class="screen-title">أخبرنا عن كتابك</h2>
+      <p class="screen-desc">هنا نبدأ في بناء صورة واضحة عن المشروع قبل أي قرار تصميمي.</p>
+    </div>
+
+    <div class="field-row">
+      <div class="field-group">
+        <label class="field-label">عنوان الكتاب <span class="field-required">*</span></label>
+        <input type="text" name="عنوان_الكتاب" placeholder="العنوان النهائي أو المقترح" required>
+      </div>
+      <div class="field-group">
+        <label class="field-label">التصنيف الرئيسي</label>
+        <select name="التصنيف">
+          <option value="">— اختر —</option>
+          <option>تطوير الذات والتحفيز</option>
+          <option>أعمال وريادة أعمال</option>
+          <option>علم النفس والسلوك</option>
+          <option>الإدارة والقيادة</option>
+          <option>رواية وقصة</option>
+          <option>فلسفة وفكر</option>
+          <option>ديني وإسلامي</option>
+          <option>كتاب أكاديمي وبحثي</option>
+          <option>كتاب تعليمي ومناهج</option>
+          <option>ديوان شعر</option>
+          <option>سيرة ذاتية</option>
+          <option>تاريخ وحضارة</option>
+          <option>صحة وعلوم</option>
+          <option>تصنيف آخر</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">في جملة واحدة — ما الفكرة المحورية للكتاب؟ <span class="field-required">*</span></label>
+      <span class="field-hint">لا تلخّص — قُل ما يريد القارئ أن يعيشه بعد قراءته</span>
+      <textarea name="الفكرة_المحورية" id="coreIdeaInput" placeholder="مثال: كيف تستعيد تركيزك الحقيقي في عالم مليء بالضجيج..." maxlength="300" oninput="updateCounter('coreIdeaInput','coreIdeaCount')" required></textarea>
+      <div class="char-counter"><span id="coreIdeaCount">0</span> / 300</div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">من هو القارئ المثالي لهذا الكتاب؟</label>
+      <input type="text" name="القارئ_المثالي" placeholder="مثال: مدير في الثلاثينيات يبحث عن التوازن بين العمل والحياة">
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="field-group">
+      <label class="field-label">ما مستوى جهوزية المخطوطة؟</label>
+      <div class="pill-group" id="readinessGroup">
+        <div class="pill" data-value="مكتملة ومراجعة" onclick="selectPill(this,'readinessGroup','f_readiness')">مكتملة ومراجعة ✓</div>
+        <div class="pill" data-value="مكتملة — تحتاج مراجعة لغوية" onclick="selectPill(this,'readinessGroup','f_readiness')">مكتملة — تحتاج مراجعة لغوية</div>
+        <div class="pill" data-value="قيد الإنهاء" onclick="selectPill(this,'readinessGroup','f_readiness')">قيد الإنهاء (80%+)</div>
+        <div class="pill" data-value="مرحلة مبكرة" onclick="selectPill(this,'readinessGroup','f_readiness')">مرحلة مبكرة</div>
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field-group">
+        <label class="field-label">عدد الصفحات التقريبي للمخطوطة</label>
+        <input type="number" name="عدد_الصفحات" placeholder="مثال: 220" min="1">
+      </div>
+      <div class="field-group">
+        <label class="field-label">الكتاب سيُنشر عبر</label>
+        <div class="pill-group" id="publishGroup" style="margin-top:12px">
+          <div class="pill" data-value="طباعة تقليدية" onclick="selectPill(this,'publishGroup','f_publish')">طباعة 🖨</div>
+          <div class="pill" data-value="رقمي PDF" onclick="selectPill(this,'publishGroup','f_publish')">رقمي 📱</div>
+          <div class="pill" data-value="طباعة ورقمي" onclick="selectPill(this,'publishGroup','f_publish')">الاثنان</div>
+          <div class="pill" data-value="لم أقرر بعد" onclick="selectPill(this,'publishGroup','f_publish')">لم أقرر</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-bar">
+      <button type="button" class="btn-back" onclick="prevScreen(2)">→ السابق</button>
+      <button type="button" class="btn-next" onclick="nextScreen(2)">التالي <span>←</span></button>
+    </div>
+  </div>
+
+  <!-- ════════ SCREEN 3: DESIGN DETAILS ════════ -->
+  <div class="screen" id="screen-3">
+    <div class="screen-header">
+      <div class="screen-tag">الخطوة الرابعة</div>
+      <h2 class="screen-title">تفاصيل التصميم</h2>
+      <p class="screen-desc">هنا نُترجم محتواك إلى قرارات بصرية — أجب بما تشعر به، لا بما تعرفه تقنياً.</p>
+    </div>
+
+    <!-- COVER SECTION (conditional) -->
+    <div class="conditional-section" id="coverSection">
+      <div class="info-box">
+        <div class="info-box-icon">🎨</div>
+        <div><p><strong>قسم الغلاف الخارجي</strong><br>الغلاف هو أول ما يراه القارئ — كل قرار هنا يؤثر على الانطباع الأول.</p></div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">ما التوجه البصري الذي تريده للغلاف؟</label>
+        <span class="field-hint">اختر ما يناسب روح كتابك — يمكن اختيار أكثر من واحد</span>
+        <div class="pill-group" id="coverStyleGroup">
+          <div class="pill" data-value="تايبوغرافي (النص هو الغلاف)" onclick="multiPill(this,'coverStyleGroup','f_coverstyle')">تايبوغرافي — النص بطل الغلاف</div>
+          <div class="pill" data-value="تصوير فوتوغرافي أو صورة" onclick="multiPill(this,'coverStyleGroup','f_coverstyle')">فوتوغرافي / صورة</div>
+          <div class="pill" data-value="توضيح ورسم يدوي" onclick="multiPill(this,'coverStyleGroup','f_coverstyle')">توضيح ورسم يدوي</div>
+          <div class="pill" data-value="تجريدي / هندسي" onclick="multiPill(this,'coverStyleGroup','f_coverstyle')">تجريدي / هندسي</div>
+          <div class="pill" data-value="أنيق ومنضبط" onclick="multiPill(this,'coverStyleGroup','f_coverstyle')">أنيق ومنضبط</div>
+          <div class="pill" data-value="جريء وملفت" onclick="multiPill(this,'coverStyleGroup','f_coverstyle')">جريء وملفت</div>
+          <div class="pill" data-value="دافئ وإنساني" onclick="multiPill(this,'coverStyleGroup','f_coverstyle')">دافئ وإنساني</div>
+          <div class="pill" data-value="غامق وعميق" onclick="multiPill(this,'coverStyleGroup','f_coverstyle')">غامق وعميق</div>
+          <div class="pill" data-value="مفتوح — اترك القرار للاستوديو" onclick="multiPill(this,'coverStyleGroup','f_coverstyle')">مفتوح — قرار الاستوديو</div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">ألوان تريدها بالضرورة / ترفضها</label>
+        <input type="text" name="تفضيلات_الألوان" placeholder="مثال: أريد اللون الأزرق العميق. أرفض الأحمر الصارخ.">
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">روابط أمثلة على أغلفة تعجبك</label>
+        <span class="field-hint">Pinterest أو Google Images أو أي رابط — حتى لو كانت كتباً أجنبية</span>
+        <input type="text" name="أمثلة_أغلفة" placeholder="https://... أو صِف ما تريده بكلماتك">
+      </div>
+
+      <div class="divider"></div>
+    </div>
+
+    <!-- INTERIOR SECTION (always shown) -->
+    <div class="info-box">
+      <div class="info-box-icon">📄</div>
+      <div><p><strong>التنسيق الداخلي للكتاب</strong><br>القرارات هنا تحدد كيف يقرأ القارئ كتابك — وكم سيستمتع بالتجربة.</p></div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">ما طبيعة محتوى كتابك؟ <span class="field-required">*</span></label>
+      <span class="field-hint">هذا يحدد نوع الشبكة الطباعية والخطوط والهرمية البصرية المناسبة</span>
+      <div class="choice-grid" id="bookTypeGrid" style="grid-template-columns: 1fr 1fr;">
+        <div class="choice-card" data-value="سردي متصل (رواية / قصة / سيرة ذاتية)" onclick="selectChoice(this,'bookTypeGrid','f_booktype')" style="padding:16px;">
+          <span class="choice-icon" style="font-size:24px">📖</span>
+          <div class="choice-name" style="font-size:14px">سردي متصل</div>
+          <div class="choice-desc">روايات، قصص، مذكرات، سيرة ذاتية — نص يجري بلا انقطاع</div>
+        </div>
+        <div class="choice-card" data-value="فكري ومقالي (عناوين ونقاط كثيرة)" onclick="selectChoice(this,'bookTypeGrid','f_booktype')" style="padding:16px;">
+          <span class="choice-icon" style="font-size:24px">💡</span>
+          <div class="choice-name" style="font-size:14px">فكري ومقالي</div>
+          <div class="choice-desc">تطوير ذات، أعمال، فلسفة — عناوين فرعية ونقاط وصناديق بصرية</div>
+        </div>
+        <div class="choice-card" data-value="أكاديمي وبحثي (جداول وهوامش معقدة)" onclick="selectChoice(this,'bookTypeGrid','f_booktype')" style="padding:16px;">
+          <span class="choice-icon" style="font-size:24px">🔬</span>
+          <div class="choice-name" style="font-size:14px">أكاديمي وبحثي</div>
+          <div class="choice-desc">بحوث، مناهج، مراجع — جداول وهوامش وتوثيق علمي</div>
+        </div>
+        <div class="choice-card" data-value="شعر وأدب" onclick="selectChoice(this,'bookTypeGrid','f_booktype')" style="padding:16px;">
+          <span class="choice-icon" style="font-size:24px">✍️</span>
+          <div class="choice-name" style="font-size:14px">شعر وأدب</div>
+          <div class="choice-desc">ديوان شعر، نثر أدبي — فراغ وإيقاع بصري مقصود</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">مقاس الكتاب المطلوب</label>
+      <span class="field-hint">إذا لم تكن متأكداً، الاختيار الافتراضي هو الأنسب لتصنيفك</span>
+      <select name="مقاس_الكتاب" id="sizeSelect" onchange="document.getElementById('f_size').value=this.value">
+        <option value="لا أعرف — اترك القرار للاستوديو">لا أعرف — اترك القرار للاستوديو (موصى به)</option>
+        <option value="14×21 سم — مقاس الروايات والكتب الأدبية">14×21 سم — روايات وكتب أدبية (الأكثر شيوعاً)</option>
+        <option value="17×24 سم — المقاس الوزيري الكبير">17×24 سم — كتب فكرية وغير خيالية (وزيري كبير)</option>
+        <option value="15×21 سم — مقاس متوسط بين الروايات والفكري">15×21 سم — متوسط بين الأدبي والفكري</option>
+        <option value="A5 (14.8×21 سم) — مناسب للأكاديمي والبحثي">A5 — أكاديمي وبحثي (قياسي عالمي)</option>
+        <option value="A4 (21×29.7 سم) — كتب مصورة ومناهج">A4 — كتب مصورة ومناهج (حجم كبير)</option>
+        <option value="مقاس مخصص">مقاس مخصص — سأحدده في خانة الملاحظات</option>
+      </select>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">هل الكتاب يحتوي على عناصر خاصة؟</label>
+      <span class="field-hint">اختر كل ما ينطبق — هذا يؤثر مباشرة على التعقيد التقني والتسعير</span>
+      <div class="check-list" id="elementsGroup">
+        <div class="check-item" onclick="toggleCheck(this,'elementsGroup','f_elements')">
+          <div class="check-box"></div>
+          <div>
+            <div class="check-label">آيات قرآنية كريمة وأحاديث نبوية</div>
+            <div class="check-note">تحتاج خطاً خاصاً وضبط إملائي دقيق ومراجعة شرعية للمتن</div>
+          </div>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this,'elementsGroup','f_elements')">
+          <div class="check-box"></div>
+          <div>
+            <div class="check-label">حواشي سفلية أو هوامش بحثية</div>
+            <div class="check-note">هوامش علمية أو توثيق مراجع في أسفل الصفحات</div>
+          </div>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this,'elementsGroup','f_elements')">
+          <div class="check-box"></div>
+          <div>
+            <div class="check-label">اقتباسات بارزة (Pull Quotes)</div>
+            <div class="check-note">جمل مميزة تُعرض بشكل لافت داخل الصفحة كأداة بصرية</div>
+          </div>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this,'elementsGroup','f_elements')">
+          <div class="check-box"></div>
+          <div>
+            <div class="check-label">جداول ورسوم بيانية</div>
+            <div class="check-note">جداول مقارنة أو رسوم توضيحية داخل النص</div>
+          </div>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this,'elementsGroup','f_elements')">
+          <div class="check-box"></div>
+          <div>
+            <div class="check-label">إنفوجرافيك وصور توضيحية</div>
+            <div class="check-note">رسومات مخصصة لشرح أفكار داخل الصفحات</div>
+          </div>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this,'elementsGroup','f_elements')">
+          <div class="check-box"></div>
+          <div>
+            <div class="check-label">نص ثنائي اللغة (عربي وإنجليزي)</div>
+            <div class="check-note">محتوى يجمع بين العربية والإنجليزية في نفس الصفحات</div>
+          </div>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this,'elementsGroup','f_elements')">
+          <div class="check-box"></div>
+          <div>
+            <div class="check-label">صور فوتوغرافية داخلية</div>
+            <div class="check-note">صور ضمن النص تحتاج معالجة وتحسين للطباعة</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">هل لديك تفضيل لنوع الخط العربي؟</label>
+      <div class="pill-group" id="fontPrefGroup">
+        <div class="pill" data-value="لا أعلم — اترك للاستوديو" onclick="selectPill(this,'fontPrefGroup','f_coveropts')">لا أعلم — اترك للاستوديو</div>
+        <div class="pill" data-value="نسخي — كلاسيكي وقابل للقراءة" onclick="selectPill(this,'fontPrefGroup','f_coveropts')">نسخي — كلاسيكي</div>
+        <div class="pill" data-value="حديث مبسّط — عصري ونظيف" onclick="selectPill(this,'fontPrefGroup','f_coveropts')">حديث مبسّط</div>
+        <div class="pill" data-value="رشيق خفيف — أنيق وخفيف" onclick="selectPill(this,'fontPrefGroup','f_coveropts')">رشيق خفيف</div>
+        <div class="pill" data-value="جريء وثقيل للكتب الفكرية" onclick="selectPill(this,'fontPrefGroup','f_coveropts')">جريء وثقيل</div>
+      </div>
+    </div>
+
+    <div class="nav-bar">
+      <button type="button" class="btn-back" onclick="prevScreen(3)">→ السابق</button>
+      <button type="button" class="btn-next" onclick="nextScreen(3)">التالي <span>←</span></button>
+    </div>
+  </div>
+
+  <!-- ════════ SCREEN 4: EXPECTATIONS ════════ -->
+  <div class="screen" id="screen-4">
+    <div class="screen-header">
+      <div class="screen-tag">الخطوة الخامسة</div>
+      <h2 class="screen-title">التوقعات والإطار الزمني</h2>
+      <p class="screen-desc">وضوح التوقعات من البداية يحمي الطرفين — ويجعل التعاون أكثر متعة.</p>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">ما ميزانيتك التقريبية للمشروع؟</label>
+      <span class="field-hint">لا يوجد إجابة خاطئة — هذا يساعدنا على تقديم الباقة الأنسب لك</span>
+      <div class="choice-grid" id="budgetGrid" style="grid-template-columns: 1fr 1fr 1fr;">
+        <div class="choice-card" data-value="أقل من 500 دولار" onclick="selectChoice(this,'budgetGrid','f_budget')" style="padding:16px;text-align:center;">
+          <span class="choice-icon" style="font-size:22px">💰</span>
+          <div class="choice-name" style="font-size:13px">أقل من 500$</div>
+          <div class="choice-desc">للمشاريع المحدودة النطاق</div>
+        </div>
+        <div class="choice-card" data-value="500 — 1000 دولار" onclick="selectChoice(this,'budgetGrid','f_budget')" style="padding:16px;text-align:center;">
+          <span class="choice-icon" style="font-size:22px">💰💰</span>
+          <div class="choice-name" style="font-size:13px">500$ – 1,000$</div>
+          <div class="choice-desc">للكتب الاحترافية المتكاملة</div>
+        </div>
+        <div class="choice-card" data-value="1000 — 2000 دولار" onclick="selectChoice(this,'budgetGrid','f_budget')" style="padding:16px;text-align:center;">
+          <span class="choice-icon" style="font-size:22px">💰💰💰</span>
+          <div class="choice-name" style="font-size:13px">1,000$ – 2,000$</div>
+          <div class="choice-desc">للمشاريع التفصيلية الكاملة</div>
+        </div>
+        <div class="choice-card" data-value="أكثر من 2000 دولار" onclick="selectChoice(this,'budgetGrid','f_budget')" style="padding:16px;text-align:center;">
+          <span class="choice-icon" style="font-size:22px">✨</span>
+          <div class="choice-name" style="font-size:13px">أكثر من 2,000$</div>
+          <div class="choice-desc">للمشاريع المؤسسية والبريميوم</div>
+        </div>
+        <div class="choice-card" data-value="مفتوح — حسب العرض" onclick="selectChoice(this,'budgetGrid','f_budget')" style="padding:16px;text-align:center;grid-column:span 2;">
+          <span class="choice-icon" style="font-size:22px">🤝</span>
+          <div class="choice-name" style="font-size:13px">مفتوح — عرّفني على نفسك وسأرى</div>
+          <div class="choice-desc">أفضّل أن أرى العرض قبل تحديد ميزانية</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">أولويتك في هذا المشروع؟</label>
+      <div class="toggle-group">
+        <div class="toggle-btn" onclick="toggleBtn(this,'priority-group')" data-group="priority-group" data-value="الموعد — أحتاج التسليم سريعاً">الموعد أولاً ⚡</div>
+        <div class="toggle-btn" onclick="toggleBtn(this,'priority-group')" data-group="priority-group" data-value="الجودة — مهما استغرق">الجودة أولاً ✦</div>
+        <div class="toggle-btn" onclick="toggleBtn(this,'priority-group')" data-group="priority-group" data-value="التوازن بينهما">التوازن بينهما</div>
+      </div>
+      <input type="hidden" name="الأولوية" id="f_priority_hidden">
+    </div>
+
+    <div class="field-row">
+      <div class="field-group">
+        <label class="field-label">هل لديك موعد إطلاق محدد؟</label>
+        <input type="date" name="موعد_الإطلاق" style="direction:ltr;text-align:left;">
+      </div>
+      <div class="field-group">
+        <label class="field-label">كيف تفضل التواصل معنا؟</label>
+        <select name="طريقة_التواصل">
+          <option value="">— اختر —</option>
+          <option>واتساب (الأسرع)</option>
+          <option>البريد الإلكتروني</option>
+          <option>مكالمة فيديو (زووم / ميت)</option>
+          <option>أي طريقة تناسبكم</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="nav-bar">
+      <button type="button" class="btn-back" onclick="prevScreen(4)">→ السابق</button>
+      <button type="button" class="btn-next" onclick="nextScreen(4)">التالي <span>←</span></button>
+    </div>
+  </div>
+
+  <!-- ════════ SCREEN 5: FINAL QUESTION + SUBMIT ════════ -->
+  <div class="screen" id="screen-5">
+    <div class="screen-header">
+      <div class="screen-tag">الخطوة الأخيرة</div>
+      <h2 class="screen-title">السؤال الأهم</h2>
+      <p class="screen-desc">هذا السؤال وحده يساوي كل الأسئلة السابقة مجتمعة.</p>
+    </div>
+
+    <div class="warn-box">
+      <p>⚠️ هذا هو المكان الذي يجب أن تكون فيه صريحاً تماماً — إجابتك هنا ستحدد كيف نتعامل مع كل قرار تصميمي.</p>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">ما الذي تخشى ألا يفهمه المصمم عن كتابك؟ <span class="field-required">*</span></label>
+      <span class="field-hint">لا تُرضي المصمم — قُل ما يُقلقك فعلاً. كل كلمة تكتبها هنا تُترجَم لاحقاً في كل قرار بصري.</span>
+      <textarea name="السؤال_الجوهري" id="keyQuestionInput" placeholder="مثال: أخشى أن يُعطي الكتاب مظهراً شعبياً بينما الجمهور أكاديمي. أو: هذا الكتاب كُتب في ظروف صعبة وأريد أن يشعر القارئ بعمق ما وراءه..." style="min-height:140px;" maxlength="600" oninput="updateCounter('keyQuestionInput','keyCount')" required></textarea>
+      <div class="char-counter"><span id="keyCount">0</span> / 600</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="field-group">
+      <label class="field-label">هل هناك أي ملاحظات أو تفاصيل أخرى تريد إضافتها؟</label>
+      <textarea name="ملاحظات_إضافية" placeholder="أي شيء آخر تريد أن نعرفه — لا يوجد تفصيل صغير..."></textarea>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">كيف وصلت إلينا؟</label>
+      <div class="pill-group" id="sourceGroup">
+        <div class="pill" data-value="إنستقرام" onclick="selectPill(this,'sourceGroup','')">إنستقرام</div>
+        <div class="pill" data-value="لينكدإن" onclick="selectPill(this,'sourceGroup','')">لينكدإن</div>
+        <div class="pill" data-value="توصية من شخص" onclick="selectPill(this,'sourceGroup','')">توصية شخصية</div>
+        <div class="pill" data-value="بحث على الإنترنت" onclick="selectPill(this,'sourceGroup','')">بحث على الإنترنت</div>
+        <div class="pill" data-value="رأيت عملاً منشوراً" onclick="selectPill(this,'sourceGroup','')">رأيت عملاً منشوراً</div>
+        <div class="pill" data-value="مصدر آخر" onclick="selectPill(this,'sourceGroup','')">مصدر آخر</div>
+      </div>
+      <input type="hidden" name="مصدر_المعرفة" id="f_source">
+    </div>
+
+    <div style="background:var(--paper-dark);border-radius:var(--radius);padding:20px 22px;margin:28px 0;text-align:center;">
+      <p style="font-size:13.5px;color:var(--muted);line-height:1.8;">
+        📖 سيصلك رد من فريق A2BOOK خلال <strong style="color:var(--navy)">24-48 ساعة</strong> بعد مراجعة البريف.<br>
+        <em style="font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--navy);">"الكتاب الجيد لا يُقرأ فقط — بل يُختبَر."</em>
+      </p>
+    </div>
+
+    <div class="nav-bar">
+      <button type="button" class="btn-back" onclick="prevScreen(5)">→ السابق</button>
+      <button type="submit" class="btn-submit" onclick="prepareSubmit()">
+        إرسال البريف ✦
+      </button>
+    </div>
+  </div>
+
+</form>
+
+<!-- ════════ SUCCESS ════════ -->
+<div class="success-screen" id="successScreen">
+  <div class="success-icon">📬</div>
+  <h2>وصل البريف بنجاح!</h2>
+  <p>شكراً على الوقت الذي منحتنا إياه — سيراجع الفريق بريفك ويعود إليك خلال 24-48 ساعة بعرض مفصّل.</p>
+  <div class="success-badge">A2BOOK · هندسة تجربة الكتاب</div>
+</div>
+
+</div><!-- end .main -->
+
+<footer class="site-footer">
+  <span>A2BOOK</span> Studio · هندسة تجربة الكتاب العربي · جميع الحقوق محفوظة 2026
+</footer>
+
+<script>
+// ── STATE ──
+let currentScreen = 0;
+const TOTAL_SCREENS = 6;
+const selectedService = { value: '' };
+
+// ── STARS ──
+(function createStars() {
+  const container = document.getElementById('starsContainer');
+  for (let i = 0; i < 30; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    star.style.cssText = `top:${Math.random()*100}%;left:${Math.random()*100}%;opacity:${Math.random()*0.4+0.1};`;
+    container.appendChild(star);
+  }
+})();
+
+// ── PROGRESS ──
+function updateProgress() {
+  const pct = (currentScreen / (TOTAL_SCREENS - 1)) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.querySelectorAll('.hero-step').forEach((el, i) => {
+    el.classList.remove('active','done');
+    if (i === currentScreen) el.classList.add('active');
+    else if (i < currentScreen) el.classList.add('done');
+  });
+}
+
+// ── SCREEN NAVIGATION ──
+function showScreen(n) {
+  document.querySelectorAll('.screen').forEach((s,i) => {
+    s.classList.toggle('active', i === n);
+  });
+  document.getElementById('successScreen').classList.remove('active');
+  currentScreen = n;
+  updateProgress();
+  window.scrollTo({ top: document.getElementById('siteHeader').offsetTop, behavior: 'smooth' });
+}
+
+function nextScreen(from) {
+  if (!validateScreen(from)) return;
+  showScreen(from + 1);
+}
+
+function prevScreen(from) {
+  if (from > 0) showScreen(from - 1);
+}
+
+// ── VALIDATION ──
+function validateScreen(n) {
+  if (n === 0) {
+    if (!selectedService.value) {
+      alert('يرجى اختيار نوع الخدمة أولاً');
+      return false;
+    }
+  }
+  if (n === 1) {
+    const name = document.getElementById('f_name').value.trim();
+    const email = document.getElementById('f_email').value.trim();
+    if (!name || !email) {
+      alert('يرجى ملء الاسم والبريد الإلكتروني');
+      return false;
+    }
+  }
+  return true;
+}
+
+// ── CHOICE CARDS (single select) ──
+function selectChoice(el, groupId, hiddenId) {
+  document.querySelectorAll(`#${groupId} .choice-card`).forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  const val = el.dataset.value;
+  if (hiddenId) document.getElementById(hiddenId).value = val;
+  if (groupId === 'serviceGrid') {
+    selectedService.value = val;
+    updateCoverVisibility(val);
+  }
+}
+
+function updateCoverVisibility(service) {
+  const coverSection = document.getElementById('coverSection');
+  if (service === 'interior') {
+    coverSection.classList.add('hidden');
+  } else {
+    coverSection.classList.remove('hidden');
+  }
+}
+
+// ── PILLS (single select) ──
+function selectPill(el, groupId, hiddenId) {
+  document.querySelectorAll(`#${groupId} .pill`).forEach(p => p.classList.remove('selected'));
+  el.classList.add('selected');
+  const val = el.dataset.value;
+  if (hiddenId) document.getElementById(hiddenId).value = val;
+  if (groupId === 'sourceGroup') document.getElementById('f_source').value = val;
+}
+
+// ── PILLS (multi select) ──
+function multiPill(el, groupId, hiddenId) {
+  el.classList.toggle('selected');
+  const vals = [];
+  document.querySelectorAll(`#${groupId} .pill.selected`).forEach(p => vals.push(p.dataset.value));
+  if (hiddenId) document.getElementById(hiddenId).value = vals.join(' | ');
+}
+
+// ── TOGGLE BUTTONS (single select) ──
+function toggleBtn(el, group) {
+  document.querySelectorAll(`[data-group="${group}"]`).forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  const hiddenMap = { 'prevwork-group': 'f_prevwork', 'priority-group': 'f_priority' };
+  const hiddenId = hiddenMap[group];
+  if (hiddenId) {
+    const hidden = document.getElementById(hiddenId);
+    if (hidden) hidden.value = el.dataset.value;
+  }
+  if (group === 'prevwork-group') {
+    const badExp = document.getElementById('badExpGroup');
+    badExp.style.display = el.dataset.value.includes('سلبية') ? 'block' : 'none';
+  }
+  if (group === 'priority-group') {
+    document.getElementById('f_priority_hidden').value = el.dataset.value;
+    document.getElementById('f_priority').value = el.dataset.value;
+  }
+}
+
+// ── CHECKBOXES (multi select) ──
+function toggleCheck(el, groupId, hiddenId) {
+  el.classList.toggle('selected');
+  const vals = [];
+  document.querySelectorAll(`#${groupId} .check-item.selected .check-label`).forEach(l => vals.push(l.textContent.trim()));
+  if (hiddenId) document.getElementById(hiddenId).value = vals.join(' | ') || 'لا يوجد';
+}
+
+// ── CHAR COUNTER ──
+function updateCounter(inputId, counterId) {
+  const len = document.getElementById(inputId).value.length;
+  document.getElementById(counterId).textContent = len;
+}
+
+// ── SYNC REPLY EMAIL ──
+function syncReply() {
+  document.getElementById('f_replyto').value = document.getElementById('f_email').value;
+}
+
+// ── PREPARE SUBMIT ──
+function prepareSubmit() {
+  // sync size field
+  const sizeEl = document.getElementById('sizeSelect');
+  if (sizeEl) document.getElementById('f_size').value = sizeEl.value;
+}
+
+// ── FORM SUBMIT HANDLER ──
+document.getElementById('briefForm').addEventListener('submit', function(e) {
+  const key = document.getElementById('keyQuestionInput').value.trim();
+  if (!key) {
+    e.preventDefault();
+    alert('يرجى الإجابة على السؤال الجوهري الأخير');
+    return;
+  }
+  // Formspree will handle the redirect; but we intercept for UX
+  e.preventDefault();
+  const form = this;
+  const data = new FormData(form);
+  fetch(form.action, {
+    method: 'POST',
+    body: data,
+    headers: { 'Accept': 'application/json' }
+  })
+  .then(res => {
+    if (res.ok) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById('successScreen').classList.add('active');
+      document.getElementById('progressFill').style.width = '100%';
+      document.querySelectorAll('.hero-step').forEach(s => s.classList.add('done'));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      res.json().then(data => {
+        if (data.errors) alert('حدث خطأ: ' + data.errors.map(e=>e.message).join(', '));
+        else alert('حدث خطأ في الإرسال. يرجى المحاولة مرة أخرى.');
+      });
+    }
+  })
+  .catch(() => {
+    alert('تعذّر الاتصال. تأكد من اتصالك بالإنترنت وحاول مرة أخرى.');
+  });
+});
+
+// ── INIT ──
+updateProgress();
+</script>
+</body>
+</html>
